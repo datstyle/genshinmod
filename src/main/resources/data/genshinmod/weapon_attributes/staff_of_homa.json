@@ -1,0 +1,34 @@
+{
+  "attributes": {
+    "attack_range": 3.5,
+    "pose": "bettercombat:pose_two_handed_polearm",
+    "two_handed": true,
+    "category": "spear",
+    "attacks": [
+      {
+        "hitbox": "FORWARD_BOX",
+        "damage_multiplier": 0.9,
+        "angle": 0,
+        "upswing": 0.5,
+        "animation": "bettercombat:two_handed_stab_right",
+        "swing_sound": { "id": "genshinmod:bloodsoaked_slash" }
+      },
+      {
+        "hitbox": "FORWARD_BOX",
+        "damage_multiplier": 0.9,
+        "angle": 0,
+        "upswing": 0.5,
+        "animation": "bettercombat:two_handed_stab_left",
+        "swing_sound": { "id": "genshinmod:bloodsoaked_slash" }
+      },
+      {
+        "hitbox": "HORIZONTAL_PLANE",
+        "damage_multiplier": 1.4,
+        "angle": 180,
+        "upswing": 0.5,
+        "animation": "bettercombat:two_handed_slash_horizontal_right",
+        "swing_sound": { "id": "genshinmod:bloodsoaked_slash" }
+      }
+    ]
+  }
+}

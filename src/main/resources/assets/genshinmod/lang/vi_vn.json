@@ -1,0 +1,30 @@
+{
+  "itemGroup.genshinmod": "Genshin Mod",
+  "tier.genshinmod.four_star": "Vũ khí 4★",
+  "tier.genshinmod.five_star": "Vũ khí hiếm",
+  "tier.genshinmod.legendary": "Vũ khí siêu hiếm",
+
+
+  "item.genshinmod.bloodsoaked_ruins": "Tàn Tích Đẫm Máu",
+  "tooltip.genshinmod.type_spear": "Giáo",
+  "tooltip.genshinmod.charge": "Điện tích",
+  "tooltip.genshinmod.passive": "Nội tại",
+  "tooltip.genshinmod.passive_1": " Mỗi đòn trúng tích 1 điện tích (tối đa 3).",
+  "tooltip.genshinmod.passive_2": " Kẻ địch đang ướt nhận thêm sát thương sét.",
+  "tooltip.genshinmod.skill": "Kỹ năng (chuột phải)",
+  "tooltip.genshinmod.skill_1": " Chưa đủ điện tích: lao tới đâm xuyên.",
+  "tooltip.genshinmod.skill_2": " Đủ 3 điện tích: bay lên, dậm xuống tạo vòng điện xung.",
+  "tooltip.genshinmod.enchanted": "✦ Phù phép: chiêu dậm bùng nổ mạnh hơn",
+
+
+  "item.genshinmod.staff_of_homa": "Trượng Hộ Ma",
+  "staffhoma.genshinmod.type_spear": "Trường thương",
+  "staffhoma.genshinmod.charge": "Linh hỏa",
+  "staffhoma.genshinmod.passive": "Nội tại",
+  "staffhoma.genshinmod.passive_1": "Đòn trúng thiêu đót địch và tích 1 linh hỏa ( tối đa 3",
+  "staffhoma.genshin.passive_2": "Máu từ 50% trở xuống: thêm sát thương lửa",
+  "staffhoma.genshin.skill": "Kỹ năng ( chuột phải)",
+  "staffhoma.genshin.skill_1": "Chưa đủ Linh hỏa: Hiến 2 tim để vào trạng thái Hộ Ma, đòn đánh mạnh hơn và hồi máu",
+  "staffhoma.genshin.skill_2": "Đủ 3 Linh Hỏa: bùng nổ lửa diện rộng quanh người",
+  "staffhoma.genshin.notifaction": "Đang trong trạng thái hộ ma"
+}

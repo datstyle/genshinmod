@@ -1,0 +1,11 @@
+{
+  "bloodsoaked_dash":   { "sounds": [ "genshinmod:bloodsoaked_dash" ] },
+  "bloodsoaked_hit":    { "sounds": [ "genshinmod:bloodsoaked_hit" ] },
+  "bloodsoaked_charge": { "sounds": [ "genshinmod:bloodsoaked_charge" ] },
+  "bloodsoaked_burst":  { "sounds": [ "genshinmod:bloodsoaked_burst" ] },
+  "bloodsoaked_slash": { "sounds": [ "genshinmod:bloodsoaked_slash" ] },
+  "homa_slash":  { "sounds": ["genshinmod:staff_of_homa/homa_slash"] },
+  "homa_charge": { "sounds": ["genshinmod:staff_of_homa/homa_charge"] },
+  "homa_ready":  { "sounds": ["genshinmod:staff_of_homa/homa_ready"] },
+  "homa_burst":  { "sounds": ["genshinmod:staff_of_homa/homa_burst"] }
+}

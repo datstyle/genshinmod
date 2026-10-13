@@ -1,0 +1,31 @@
+{
+  "itemGroup.genshinmod": "Genshin Mod",
+  "tier.genshinmod.four_star": "4★ Weapon",
+  "tier.genshinmod.five_star": "Rare Weapon",
+  "tier.genshinmod.legendary": "Super Rare Weapon",
+
+
+  "item.genshinmod.bloodsoaked_ruins": "Bloodsoaked Ruins",
+  "tooltip.genshinmod.type_spear": "Polearm",
+  "tooltip.genshinmod.charge": "Charge",
+  "tooltip.genshinmod.passive": "Passive",
+  "tooltip.genshinmod.passive_1": " Each hit grants 1 charge (max 3).",
+  "tooltip.genshinmod.passive_2": " Wet enemies take extra lightning damage.",
+  "tooltip.genshinmod.skill": "Skill (Right Click)",
+  "tooltip.genshinmod.skill_1": " Not fully charged: dash forward and pierce.",
+  "tooltip.genshinmod.skill_2": " Fully charged: leap up and slam down, creating an electric shockwave.",
+  "tooltip.genshinmod.enchanted": "✦ Enchanted: the slam skill erupts with greater power",
+
+
+  "item.genshinmod.staff_of_homa": "Staff of Homa",
+  "staffhoma.genshinmod.type_spear": "Long spear",
+  "staffhoma.genshinmod.charge": "Spirit Fire",
+  "staffhoma.genshinmod.passive": "passive",
+  "staffhoma.genshinmod.passive_1": "The hit will incinerate the enemy and grant 1 spirit flame (maximun 3)",
+  "staffhoma.genshin.passive_2": "Health at 50% or below: deals bonus fire damage",
+  "staffhoma.genshin.skill": "SKill (right click)",
+  "staffhoma.genshin.skill_1": "Insufficient Spirit Fire: Sacrifice 2 Hearts to enter Demon Guard mode; attacks become more powerful and restore health.",
+  "staffhoma.genshin.skill_2": "With all 3 Spirit Flames: triggers a massive area-of-effect fire explosion around the user.",
+  "staffhoma.genshin.notifaction": "Currently in a protective state."
+  
+}
