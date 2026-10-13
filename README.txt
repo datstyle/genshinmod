@@ -1,46 +1,91 @@
+# GenshinMod
 
-Source installation information for modders
--------------------------------------------
-This code follows the Minecraft Forge installation methodology. It will apply
-some small patches to the vanilla MCP source code, giving you and it access 
-to some of the data and functions you need to build a successful mod.
+Mod vũ khí **Genshin Impact** cho **Minecraft Forge 1.20.1**. Mod thêm các vũ khí 5★ với model 3D riêng, cơ chế chiêu thức, hiệu ứng và âm thanh lấy cảm hứng từ game.
 
-Note also that the patches are built against "un-renamed" MCP source code (aka
-SRG Names) - this means that you will not be able to read them directly against
-normal code.
+> Đây là mod do fan làm, **không liên kết với HoYoverse**. Genshin Impact và các tên, hình ảnh liên quan thuộc quyền sở hữu của HoYoverse.
 
-Setup Process:
-==============================
+| | |
+|---|---|
+| Minecraft | 1.20.1 |
+| Forge | 47.4.10 |
+| Java | 17 |
+| Mod ID | `genshinmod` |
 
-Step 1: Open your command-line and browse to the folder where you extracted the zip file.
+---
 
-Step 2: You're left with a choice.
-If you prefer to use Eclipse:
-1. Run the following command: `./gradlew genEclipseRuns`
-2. Open Eclipse, Import > Existing Gradle Project > Select Folder 
-   or run `gradlew eclipse` to generate the project.
+## Vũ khí
 
-If you prefer to use IntelliJ:
-1. Open IDEA, and import project.
-2. Select your build.gradle file and have it import.
-3. Run the following command: `./gradlew genIntellijRuns`
-4. Refresh the Gradle Project in IDEA if required.
+### Bloodsoaked Ruins (Giáo của Flins)
+`genshinmod:bloodsoaked_ruins` · 5★
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can 
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-(this does not affect your code) and then start the process again.
+- **Nội tại:** mỗi đòn trúng tích 1 điện tích (tối đa 3). Mục tiêu đang ướt nhận thêm sát thương sét.
+- **Chuột phải:**
+  - Dưới 3 điện tích: lao tới đâm.
+  - Đủ 3 điện tích: chiêu dậm. Người dùng bay lên, lơ lửng rồi lao xuống, tạo 3 vòng sát thương điện khớp với âm thanh.
+- **Bản phù phép:** chiêu dậm mạnh hơn (sát thương x1.5, bán kính x1.3) và có hiệu ứng vẽ bằng hình học thật ở client, bản thường dùng hạt.
+- Ô hotbar và túi đồ sáng lên khi đủ điện tích. Giáo được đeo sau lưng khi không cầm trên tay.
+- **Cách có được:** chỉ xuất hiện trong rương công trình (tỉ lệ 10%), **không có công thức chế tạo**.
 
-Mapping Names:
-=============================
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license, if you do not agree with it you can change your mapping names to other crowdsourced names in your 
-build.gradle. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/MinecraftForge/MCPConfig/blob/master/Mojang.md
+### Staff of Homa (Trượng Hộ Ma)
+`genshinmod:staff_of_homa` · 5★ · Trường thương
 
-Additional Resources: 
-=========================
-Community Documentation: https://docs.minecraftforge.net/en/1.20.1/gettingstarted/
-LexManos' Install Video: https://youtu.be/8VEdtQLuLO0
-Forge Forums: https://forums.minecraftforge.net/
-Forge Discord: https://discord.minecraftforge.net/
+- **Nội tại:** đòn trúng thiêu đốt mục tiêu và tích 1 **Linh Hỏa** (tối đa 3). Khi máu người cầm từ 50% trở xuống, đòn đánh gây thêm sát thương lửa.
+- **Chuột phải khi đủ 3 Linh Hỏa:** bùng nổ lửa diện rộng quanh người, đẩy lùi và thiêu đốt địch xung quanh.
+- Tầm đánh dài hơn một chút so với kiếm thường.
+- Có bộ âm thanh riêng cho vung, đánh trúng, nhận Linh Hỏa, đủ 3 Linh Hỏa và bùng nổ.
+
+### Hệ thống chung
+- Tooltip và màu tên theo độ hiếm (4★ tím, 5★ vàng, 5★ siêu hiếm đỏ).
+- Mod có model 3D tùy chỉnh, giáo và trượng hiển thị cả khi đeo sau lưng.
+
+---
+
+## Cài đặt (người chơi)
+
+1. Cài **Minecraft 1.20.1** và **Forge 47.4.10**.
+2. Tải file `.jar` mới nhất ở mục **Releases** (hoặc tự build, xem bên dưới).
+3. Bỏ file `.jar` vào thư mục `mods` rồi vào game.
+
+## Build từ mã nguồn (nhà phát triển)
+
+Yêu cầu: JDK 17.
+
+```powershell
+# Build ra file jar (nằm trong build\libs)
+.\gradlew build
+
+# Chạy client để thử
+.\gradlew runClient
+
+# Chạy server riêng để kiểm tra mod có chạy ổn phía server không
+.\gradlew runServer
+```
+
+Lần đầu chạy `runServer` cần mở `run\eula.txt` và đổi `eula=false` thành `eula=true`.
+
+## Cấu trúc thư mục
+
+```
+src/main/java/com/dat/genshinmod/
+├── item/      Vũ khí, ModItems, tab sáng tạo, độ hiếm
+├── combat/    Chiêu dậm, xung điện (server)
+├── client/    Render, hiệu ứng, đeo sau lưng, tooltip (client)
+├── network/   Gói tin giữa server và client
+├── sound/     Đăng ký âm thanh
+└── loot/      Loot modifier cho rương công trình
+src/main/resources/
+├── assets/genshinmod/   Model, texture, âm thanh, ngôn ngữ
+└── data/                Loot modifier
+```
+
+## Báo lỗi
+
+Mở **Issues** trên GitHub, ghi rõ: phiên bản mod, phiên bản Forge, danh sách mod đang dùng và file `logs/latest.log`.
+
+## Tác giả
+
+**Đạt** ([@datstyle](https://github.com/datstyle))
+
+## Giấy phép
+
+Chưa chọn giấy phép. Khi chưa có file `LICENSE`, mặc định mã nguồn vẫn thuộc về tác giả, người khác chưa được tự do sử dụng lại. Muốn mở mã nguồn thì thêm file `LICENSE` (ví dụ MIT).
