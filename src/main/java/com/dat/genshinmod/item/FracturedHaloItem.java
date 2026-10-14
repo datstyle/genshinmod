@@ -47,7 +47,7 @@ public class FracturedHaloItem extends SwordItem implements RarityWeapon {
     public static final int ENERGY_PER_HIT = 12;          // điện năng mỗi đòn đánh trúng
     public static final int ENERGY_PER_ARC_HIT = 3;       // điện năng mỗi mục tiêu trúng tia điện
 
-    public static final int SKILL_TICKS = 100;            // thời gian duy trì kỹ năng: 5 giây
+    public static final int SKILL_TICKS = 200;            // thời gian duy trì kỹ năng: 100 = 5 giây
     public static final int SKILL_COOLDOWN = 200;         // hồi chiêu: 10 giây (tính từ lúc bấm)
     public static final int PULSE_INTERVAL = 20;          // cứ 1 giây bắn điện một lần
     public static final double ARC_RADIUS = 2.0;          // bán kính tia điện: 2 block
