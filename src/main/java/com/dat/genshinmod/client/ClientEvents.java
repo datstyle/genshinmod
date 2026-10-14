@@ -86,6 +86,8 @@ public class ClientEvents {
         event.register(SpearItemRenderer.LANTERN);
         event.register(SpearItemRenderer.AURA_HEAD);
         event.register(SpearItemRenderer.AURA_LANTERN);
+        event.register(HaloItemRenderer.BODY);
+        event.register(HaloItemRenderer.SAW);
     }
     // Vẽ ánh sáng lên ô nếu vũ khí đã đủ nội tại:
 // giáo đủ 3 điện tích (tím xanh điện), Trượng Hộ Ma đủ 3 Linh Hỏa (rực lửa)

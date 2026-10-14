@@ -5,6 +5,7 @@ import com.dat.genshinmod.client.SlamFx;
 import com.dat.genshinmod.client.TooltipColors;
 import com.dat.genshinmod.combat.ElectroPulseManager;
 import com.dat.genshinmod.combat.SlamManager;
+import com.dat.genshinmod.effect.ModEffects;
 import com.dat.genshinmod.item.ModCreativeTabs;
 import com.dat.genshinmod.item.ModItems;
 import com.dat.genshinmod.loot.ModLootModifiers;
@@ -41,6 +42,7 @@ public class genshinmod
         ModCreativeTabs.TABS.register(modEventBus);
         ModLootModifiers.register(modEventBus);
         ModSounds.SOUNDS.register(modEventBus);
+        ModEffects.EFFECTS.register(FMLJavaModLoadingContext.get().getModEventBus());
 
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.addListener(ElectroPulseManager::onServerTick);

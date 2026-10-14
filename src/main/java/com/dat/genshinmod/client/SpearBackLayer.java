@@ -11,11 +11,14 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,19 +27,43 @@ public class SpearBackLayer extends RenderLayer<AbstractClientPlayer, PlayerMode
 
     private static final int REFRESH_TICKS = 10;
 
+    // Chỉ số của từng vũ khí trong mảng
+    private static final int SPEAR = 0, STAFF = 1, HALO = 2, COUNT = 3;
+
+    // ID item của Hào Quang Tách Rời. Nếu bạn đăng ký tên khác thì sửa chuỗi này.
+    private static final ResourceLocation HALO_ID = new ResourceLocation("genshinmod", "fractured_halo");
+
+    private static Item haloItem;   // tra cứu một lần rồi nhớ lại
+
     private static final class Cache {
         long lastTick = -1L;   // -1 = chưa tìm lần nào
-        ItemStack spear = ItemStack.EMPTY;
-        ItemStack staff = ItemStack.EMPTY;
-        int spearSlot = Integer.MAX_VALUE;
-        int staffSlot = Integer.MAX_VALUE;
+        final ItemStack[] stacks = new ItemStack[COUNT];
+        final int[] slots = new int[COUNT];
         long lastFxTick = Long.MIN_VALUE;
+
+        Cache() {
+            java.util.Arrays.fill(stacks, ItemStack.EMPTY);
+            java.util.Arrays.fill(slots, Integer.MAX_VALUE);
+        }
     }
 
     private static final Map<Integer, Cache> CACHE = new HashMap<>();
 
     public SpearBackLayer(RenderLayerParent<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> parent) {
         super(parent);
+    }
+
+    private static Item itemOf(int which) {
+        switch (which) {
+            case SPEAR: return ModItems.BLOODSOAKED_RUINS.get();
+            case STAFF: return ModItems.STAFF_OF_HOMA.get();
+            default:
+                if (haloItem == null) {
+                    Item i = ForgeRegistries.ITEMS.getValue(HALO_ID);
+                    haloItem = (i == null) ? Items.AIR : i;   // AIR = chưa có cây này, bỏ qua
+                }
+                return haloItem;
+        }
     }
 
     @Override
@@ -46,24 +73,27 @@ public class SpearBackLayer extends RenderLayer<AbstractClientPlayer, PlayerMode
         if (player.isInvisible() || player.isSpectator()) return;
 
         Cache c = refresh(player);
-        // Cây nào đang cầm trên tay thì không đeo sau lưng
-        boolean spearOk = !c.spear.isEmpty() && !holdingItem(player, ModItems.BLOODSOAKED_RUINS.get());
-        boolean staffOk = !c.staff.isEmpty() && !holdingItem(player, ModItems.STAFF_OF_HOMA.get());
-        if (!spearOk && !staffOk) return;
 
-        // Chỉ đeo MỘT cây: cây nằm ở ô thấp hơn trong túi đồ (thanh nhanh ưu tiên trước)
-        boolean drawStaff = staffOk && (!spearOk || c.staffSlot < c.spearSlot);
-        ItemStack stack = drawStaff ? c.staff : c.spear;
+        // Chỉ đeo MỘT cây: cây nằm ở ô thấp hơn trong túi đồ (thanh nhanh ưu tiên trước).
+        // Cây nào đang cầm trên tay thì bỏ qua.
+        int best = -1;
+        for (int i = 0; i < COUNT; i++) {
+            if (c.stacks[i].isEmpty()) continue;
+            if (holdingItem(player, itemOf(i))) continue;
+            if (best < 0 || c.slots[i] < c.slots[best]) best = i;
+        }
+        if (best < 0) return;
+        ItemStack stack = c.stacks[best];
 
         float idleBob = Mth.sin(ageInTicks * 0.12F) * 0.035F;
         float walkBob = Mth.cos(limbSwing * 0.6662F * 2.0F) * 0.04F * limbSwingAmount;
         float bob = idleBob + walkBob;
         float sway = Mth.sin(ageInTicks * 0.12F + 1.0F) * 2.0F;
 
-        // Cả hai dùng chung vị trí và độ nghiêng với giáo Blood
+        // Tất cả dùng chung vị trí và độ nghiêng với giáo Blood
         drawOnBack(pose, buffer, light, player, stack, bob, 0.34F, -25.0F + sway);
 
-        if (drawStaff) spawnFlameIfCharged(player, c, stack);
+        if (best == STAFF) spawnFlameIfCharged(player, c, stack);
     }
 
     private void drawOnBack(PoseStack pose, MultiBufferSource buffer, int light, AbstractClientPlayer player,
@@ -104,10 +134,10 @@ public class SpearBackLayer extends RenderLayer<AbstractClientPlayer, PlayerMode
         if (c.lastTick < 0 || now - c.lastTick >= REFRESH_TICKS || now < c.lastTick) {
             c.lastTick = now;
             Inventory inv = p.getInventory();
-            c.spearSlot = findSlot(inv, ModItems.BLOODSOAKED_RUINS.get());
-            c.staffSlot = findSlot(inv, ModItems.STAFF_OF_HOMA.get());
-            c.spear = c.spearSlot == Integer.MAX_VALUE ? ItemStack.EMPTY : inv.getItem(c.spearSlot);
-            c.staff = c.staffSlot == Integer.MAX_VALUE ? ItemStack.EMPTY : inv.getItem(c.staffSlot);
+            for (int i = 0; i < COUNT; i++) {
+                c.slots[i] = findSlot(inv, itemOf(i));
+                c.stacks[i] = c.slots[i] == Integer.MAX_VALUE ? ItemStack.EMPTY : inv.getItem(c.slots[i]);
+            }
             if (CACHE.size() > 128) {   // dọn bớt người chơi đã rời đi
                 CACHE.clear();
                 CACHE.put(p.getId(), c);
@@ -122,6 +152,7 @@ public class SpearBackLayer extends RenderLayer<AbstractClientPlayer, PlayerMode
 
     /** Trả về chỉ số ô đầu tiên chứa item, hoặc Integer.MAX_VALUE nếu không có. */
     private static int findSlot(Inventory inv, Item item) {
+        if (item == Items.AIR) return Integer.MAX_VALUE;
         for (int i = 0; i < inv.getContainerSize(); i++) {
             if (inv.getItem(i).is(item)) return i;
         }

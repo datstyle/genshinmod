@@ -18,6 +18,7 @@ import net.minecraftforge.registries.RegistryObject;
                     .displayItems((params, out) -> {
                         out.accept(ModItems.BLOODSOAKED_RUINS.get());
                         out.accept(ModItems.STAFF_OF_HOMA.get());
+                        out.accept(ModItems.FRACTURED_HALO.get());
                     })
                     .build());
 
