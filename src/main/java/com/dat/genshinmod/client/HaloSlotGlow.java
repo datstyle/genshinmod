@@ -1,63 +1,84 @@
 package com.dat.genshinmod.client;
 
-import com.dat.genshinmod.genshinmod;
 import com.dat.genshinmod.item.FracturedHaloItem;
-import com.dat.genshinmod.item.ModItems;
 import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.util.Mth;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.IItemDecorator;
 import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
- * Khi Hào Quang Tách Rời đủ 100% điện năng: vòng chấm sáng xoay quanh ô vũ khí kèm vài ngôi sao lấp lánh.
- * Hiện ở cả hotbar và túi đồ. Thanh độ bền (nếu có) vẫn hiện bình thường.
+ * Khi Hào Quang Tách Rời đủ 100% điện năng: ô vật phẩm phủ ánh điện tím, có tia sáng nhảy
+ * và một vòng chấm sáng xoay quanh ô. Đây là phiên bản màu ĐIỆN TÍM (hệ Điện của Ineffa).
+ * Muốn đổi màu: sửa các hằng số màu ở đầu file.
  */
-@Mod.EventBusSubscriber(modid = genshinmod.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
-public final class HaloSlotGlow implements IItemDecorator {
+@Mod.EventBusSubscriber(modid = "genshinmod", bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+public class HaloSlotGlow {
 
-    private static final int DOTS = 24;             // số chấm trên vòng
-    private static final float RADIUS = 8.2F;       // bán kính vòng (ô vật phẩm rộng 16 px)
-    private static final int RING_RGB = 0x9FE8FF;   // màu vòng (xanh điện)
+    // ===== Màu (0xRRGGBB) =====
+    private static final int TOP_RGB     = 0xB06BFF;   // tím điện (đỉnh ô)
+    private static final int BOTTOM_RGB  = 0x6F8CFF;   // xanh tím (đáy ô)
+    private static final int SPARK_RGB   = 0xFFFFFF;   // tia sáng lấp lánhs
+    // ===== Vòng chấm =====
+    private static final int DOTS = 20;                 // số chấm
+    private static final float RADIUS = 9.6F;           // bán kính vòng
+
+    private static final ResourceLocation HALO_ID = new ResourceLocation("genshinmod", "fractured_halo");
 
     @SubscribeEvent
-    public static void onRegister(RegisterItemDecorationsEvent event) {
-        event.register(ModItems.FRACTURED_HALO.get(), new HaloSlotGlow());
+    public static void register(RegisterItemDecorationsEvent event) {
+        Item item = ForgeRegistries.ITEMS.getValue(HALO_ID);
+        if (item == null || item == Items.AIR) return;
+        event.register(item, new Decorator());
     }
 
-    @Override
-    public boolean render(GuiGraphics g, Font font, ItemStack stack, int xOffset, int yOffset) {
-        if (FracturedHaloItem.getEnergy(stack) < FracturedHaloItem.MAX_ENERGY) return false;
+    private static final class Decorator implements IItemDecorator {
+        @Override
+        public boolean render(GuiGraphics g, Font font, ItemStack stack, int x, int y) {
+            if (FracturedHaloItem.getEnergy(stack) < FracturedHaloItem.MAX_ENERGY) return false;
+            long now = Util.getMillis();
 
-        float t = (Util.getMillis() % 100000L) / 1000F;
-        float cx = xOffset + 8F, cy = yOffset + 8F;
+            // 1) Lớp màu phủ ô, nhấp nháy nhẹ
+            float wave = (float) (Math.sin(now / 240.0) * 0.5 + 0.5);
+            int alpha = 55 + (int) (45 * (Math.sin(now / 110.0) * 0.5 + 0.5));
+            int top = (alpha << 24) | mix(TOP_RGB, BOTTOM_RGB, wave);
+            int bottom = ((alpha - 15) << 24) | mix(BOTTOM_RGB, TOP_RGB, wave);
+            g.fillGradient(RenderType.guiOverlay(), x, y, x + 16, y + 16, top, bottom, 0);
 
-        // vòng chấm xoay, mỗi chấm sáng tối lệch pha nhau
-        for (int i = 0; i < DOTS; i++) {
-            float ang = Mth.TWO_PI * i / DOTS + t * 1.2F;
-            float pulse = 0.5F + 0.5F * Mth.sin(t * 5F + i * 0.9F);
-            int a = (int) (70 + 160 * pulse);
-            int px = Math.round(cx + Mth.cos(ang) * RADIUS);
-            int py = Math.round(cy + Mth.sin(ang) * RADIUS);
-            g.fill(px, py, px + 1, py + 1, (a << 24) | RING_RGB);
+            // 2) Tia sáng lấp lánh nhảy trong ô
+            for (int k = 0; k < 5; k++) {
+                long seed = (now / 130L) * 31L + k * 977L;
+                int sx = (int) Math.floorMod(seed * 7919L, 16L);
+                int sy = (int) Math.floorMod(seed * 104729L, 16L);
+                int a = (int) (230 * Math.abs(Math.sin(now / 90.0 + k)));
+                g.fill(RenderType.guiOverlay(), x + sx, y + sy, x + sx + 1, y + sy + 1, (a << 24) | SPARK_RGB);
+            }
+
+            // 3) Vòng chấm xoay quanh ô, mỗi chấm sáng tối lệch pha
+            double spin = now / 1800.0 * Math.PI * 2;
+            for (int i = 0; i < DOTS; i++) {
+                double ang = spin + i * (Math.PI * 2 / DOTS);
+                int px = x + 8 + (int) Math.round(Math.cos(ang) * RADIUS);
+                int py = y + 8 + (int) Math.round(Math.sin(ang) * RADIUS);
+                int a = 90 + (int) (130 * (Math.sin(now / 180.0 + i) * 0.5 + 0.5));
+            }
+            return false;   // vẫn vẽ thanh độ bền / số lượng như bình thường
         }
+    }
 
-        // 3 ngôi sao lấp lánh hình dấu + chạy dọc theo vòng
-        for (int k = 0; k < 3; k++) {
-            float tw = Mth.sin(t * 6F + k * 2.1F);
-            if (tw < 0.2F) continue;                                   // lúc tắt lúc sáng
-            float ang = -t * 0.9F + k * (Mth.TWO_PI / 3F);
-            int sx = Math.round(cx + Mth.cos(ang) * (RADIUS - 0.5F));
-            int sy = Math.round(cy + Mth.sin(ang) * (RADIUS - 0.5F));
-            int col = ((int) (255 * tw) << 24) | 0xFFFFFF;
-            g.fill(sx, sy - 1, sx + 1, sy + 2, col);                   // nét dọc
-            g.fill(sx - 1, sy, sx + 2, sy + 1, col);                   // nét ngang
-        }
-        return false;   // false = vẫn vẽ thanh độ bền mặc định
+    private static int mix(int a, int b, float t) {
+        int r = (int) (((a >> 16) & 0xFF) * (1 - t) + ((b >> 16) & 0xFF) * t);
+        int gr = (int) (((a >> 8) & 0xFF) * (1 - t) + ((b >> 8) & 0xFF) * t);
+        int bl = (int) ((a & 0xFF) * (1 - t) + (b & 0xFF) * t);
+        return (r << 16) | (gr << 8) | bl;
     }
 }
