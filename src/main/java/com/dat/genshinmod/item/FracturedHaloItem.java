@@ -59,7 +59,7 @@ public class FracturedHaloItem extends SwordItem implements RarityWeapon {
     public static final double BURST_RADIUS = 5.0;        // bán kính sát thương nắm đấm
     public static final int BURST_DELAY = 8;              // tick từ lúc bấm đến lúc đấm chạm đất
     public static final float BURST_DAMAGE = 16.0F;       // sát thương sấm sét (16 = 8 tim)
-    public static final int BURST_PARALYZE_TICKS = 50;
+    public static final int BURST_PARALYZE_TICKS = 20;
 
     public FracturedHaloItem(Tier tier, int dmg, float speed, Properties props) {
         super(tier, dmg, speed, props);
@@ -134,6 +134,7 @@ public class FracturedHaloItem extends SwordItem implements RarityWeapon {
             tag.putLong("SkillStart", now);
             tag.putLong("SkillUntil", now + SKILL_TICKS);
             tag.putLong("SkillCd", now + SKILL_COOLDOWN);
+            tag.putBoolean("SkillEnch", stack.isEnchanted());
             player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, SKILL_TICKS, ABSORPTION_AMP));
             HaloManager.startSkill(sp);
 
@@ -185,27 +186,30 @@ public class FracturedHaloItem extends SwordItem implements RarityWeapon {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tip, TooltipFlag flag) {
         WeaponTier t = getWeaponTier();
         tip.add(Component.literal(t.stars).withStyle(t.style()));
-        tip.add(Component.literal(t.label + " · Trường thương").withStyle(ChatFormatting.GRAY));
+        tip.add(Component.translatable(t.langKey()).append(" . ").append(Component.translatable("halo.genshinmod.type")).withStyle(ChatFormatting.GRAY));
         tip.add(Component.empty());
         int energy = getEnergy(stack);
         int filled = energy * 20 / MAX_ENERGY;
-        tip.add(Component.literal("Điện năng ").withStyle(ChatFormatting.GRAY)
+        tip.add(Component.translatable("halo.genshinmod.charge").withStyle(ChatFormatting.GRAY)
                 .append(Component.literal("█".repeat(filled)).withStyle(ChatFormatting.AQUA))
                 .append(Component.literal("█".repeat(20 - filled)).withStyle(ChatFormatting.DARK_GRAY))
                 .append(Component.literal(" " + energy + "%").withStyle(ChatFormatting.WHITE)));
         tip.add(Component.empty());
 
-        tip.add(Component.literal("Nội tại").withStyle(t.boldStyle()));
-        tip.add(Component.literal(" Đòn đánh và tia điện tích Điện năng (tối đa 100%).").withStyle(ChatFormatting.GRAY));
+        tip.add(Component.translatable("halo.genshinmod.passive").withStyle(t.boldStyle()));
+        tip.add(Component.translatable("halo.genshinmod.passive_1").withStyle(ChatFormatting.GRAY));
         tip.add(Component.empty());
 
-        tip.add(Component.literal("Kỹ năng (chuột phải)").withStyle(t.boldStyle()));
-        tip.add(Component.literal(" Tạo khiên quanh người 5 giây, mỗi giây bắn tia điện bán kính 2 block.").withStyle(ChatFormatting.GRAY));
-        tip.add(Component.literal(" Địch trúng điện mất máu và bị tê liệt. Hồi chiêu 10 giây.").withStyle(ChatFormatting.GRAY));
+        tip.add(Component.translatable("halo.genshinmod.skill").withStyle(t.boldStyle()));
+        tip.add(Component.translatable("halo.genshinmod.skill_2").withStyle(ChatFormatting.GRAY));
+        tip.add(Component.translatable("halo.genshinmod.skill_3").withStyle(ChatFormatting.GRAY));
         tip.add(Component.empty());
 
-        tip.add(Component.literal("Chiêu cuối (chuột phải khi đủ 100%)").withStyle(t.boldStyle()));
-        tip.add(Component.literal(" Nắm đấm giáng xuống, gây sát thương sấm sét lớn.").withStyle(ChatFormatting.GRAY));
+        tip.add(Component.translatable("halo.genshinmod.until").withStyle(t.boldStyle()));
+        tip.add(Component.translatable("halo.genshinmod.until_1").withStyle(ChatFormatting.GRAY));
+        if (stack.isEnchanted()) {
+            tip.add(Component.translatable("halo.genshinmod.enchanted").withStyle(ChatFormatting.LIGHT_PURPLE));
+        }
     }
 
 }

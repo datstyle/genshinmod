@@ -26,14 +26,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.Random;
-
-/**
- * Hiệu ứng của Hào Quang Tách Rời, vẽ bằng hình học ở client (KHÔNG dùng hạt):
- *  - Khiên cầu xanh quanh người + tia điện bắn ra mỗi giây.
- *  - Tia điện nhấp nháy quanh mục tiêu đang Tê Liệt.
- *  - Nắm đấm robot giáng xuống + vòng sóng + sét.
- * Không cần packet: client đọc NBT của vũ khí đang cầm (đã đồng bộ sẵn).
- */
 @Mod.EventBusSubscriber(modid = genshinmod.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class HaloFx {
 
@@ -84,7 +76,7 @@ public final class HaloFx {
             long burstTick = tag.contains("BurstTick") ? tag.getLong("BurstTick") : Long.MIN_VALUE / 2;
             float burstAge = (now - burstTick) + pt;
             boolean skillOn = tag.getLong("SkillUntil") > now;
-            boolean fistOn = burstAge >= 0F && burstAge < FIST_TOTAL;
+            boolean fistOn = burstAge >= 0.0f && burstAge < HaloBurstFx.FIST_END;
             if (!skillOn && !fistOn) continue;
 
             // ---------- Phần 1: vẽ phát sáng (khiên, tia điện, vòng sóng, sét) ----------
@@ -97,40 +89,23 @@ public final class HaloFx {
                 float age = (now - start) + pt;
                 float left = tag.getLong("SkillUntil") - now - pt;
                 boolean firstPersonSelf = p == mc.player && mc.options.getCameraType().isFirstPerson();
-                drawShield(glow, last, px, py + 0.9, pz, age, left, firstPersonSelf);
-                drawPulseArcs(glow, last, p.getId(), start, age, px, py + 1.0, pz);
+                if (tag.getBoolean("SkillEnch")) {
+                    HaloShieldFx.render(glow, last, p.getId(), start, age, left,
+                            px, py, pz, firstPersonSelf, (float) FracturedHaloItem.ARC_RADIUS);
+                } else {
+                    drawShield(glow, last, px, py + 0.9, pz, age, left, firstPersonSelf);
+                    drawPulseArcs(glow, last, p.getId(), start, age, px, py + 1.0, pz);
+                }
             }
             if (fistOn) {
                 double ix = tag.getDouble("BurstX") - cam.x;
                 double iy = tag.getDouble("BurstY") - cam.y;
                 double iz = tag.getDouble("BurstZ") - cam.z;
-                drawImpactEffects(glow, last, p.getId(), burstTick, burstAge, ix, iy, iz);
+                // Chỉ vẽ bằng `glow`. KHÔNG gọi buffers.getBuffer(...) loại khác ở đây: các loại chung 1 bộ đệm nên sẽ làm hỏng `glow`
+                HaloBurstFx.render(glow, last, p.getId(), burstTick, burstAge, ix, iy, iz,
+                        tag.getFloat("BurstYaw"), px, py, pz);
             }
             pose.popPose();
-
-            // ---------- Phần 2: nắm đấm robot (có texture) ----------
-            if (fistOn) {
-                VertexConsumer fv = buffers.getBuffer(fistType);
-                double ix = tag.getDouble("BurstX") - cam.x;
-                double iy = tag.getDouble("BurstY") - cam.y;
-                double iz = tag.getDouble("BurstZ") - cam.z;
-                float slam = FracturedHaloItem.BURST_DELAY;
-                float h;
-                if (burstAge < slam) {
-                    float t = burstAge / slam;
-                    h = 7.0F * (1F - t * t);                                   // rơi nhanh dần
-                } else if (burstAge < slam + 3F) {
-                    h = 0.35F * Mth.sin((burstAge - slam) / 3F * Mth.PI);      // nảy nhẹ khi chạm đất
-                } else {
-                    h = 0F;
-                }
-                float alpha = burstAge < 30F ? 1F : Math.max(0F, 1F - (burstAge - 30F) / (FIST_TOTAL - 30F));
-                pose.pushPose();
-                pose.translate(ix, iy + h, iz);
-                pose.mulPose(Axis.YP.rotationDegrees(-tag.getFloat("BurstYaw")));
-                drawFist(fv, pose.last(), alpha);
-                pose.popPose();
-            }
         }
 
         // ================= Mục tiêu đang Tê Liệt: tia điện quanh người =================
@@ -200,39 +175,8 @@ public final class HaloFx {
             bolt(vc, pose, origin, end, 0.05F, fade, rnd, 6, 0.4);
         }
     }
-
+    @SuppressWarnings("unsend")
     // ============================== Nắm đấm ==============================
-
-    private static void drawImpactEffects(VertexConsumer vc, PoseStack.Pose pose, int id, long burstTick, float age,
-                                          double ix, double iy, double iz) {
-        float slam = FracturedHaloItem.BURST_DELAY;
-        if (age < slam) return;
-        float since = age - slam;
-        float R = (float) FracturedHaloItem.BURST_RADIUS;
-
-        // vòng sóng lan ra mặt đất
-        float t = Mth.clamp(since / 10F, 0F, 1F);
-        if (t < 1F) {
-            float r1 = 0.5F + t * R;
-            float width = 0.7F * (1F - t) + 0.2F;
-            int al = (int) ((1F - t) * 255);
-            ring(vc, pose, ix, iy + 0.06, iz, Math.max(0F, r1 - width), r1, 28, 190, 150, 255, al);
-            ring(vc, pose, ix, iy + 0.07, iz, Math.max(0F, r1 - width * 0.4F), r1, 28, 245, 235, 255, al);
-        }
-
-        // sét giáng xuống trong vài tick đầu
-        if (since < 6F) {
-            float fade = 1F - since / 6F;
-            Random rnd = new Random(burstTick * 13L + id * 31L + ((int) (since / 2F)) * 7L);
-            bolt(vc, pose, new Vec3(ix, iy + 14, iz), new Vec3(ix, iy, iz), 0.2F, fade, rnd, 9, 0.9);
-            for (int k = 0; k < 5; k++) {
-                double ang = rnd.nextDouble() * Math.PI * 2, dist = 1.0 + rnd.nextDouble() * (R - 1.5);
-                double x = ix + Math.cos(ang) * dist, z = iz + Math.sin(ang) * dist;
-                bolt(vc, pose, new Vec3(x, iy + 12, z), new Vec3(x, iy, z), 0.1F, fade, rnd, 8, 0.7);
-            }
-        }
-    }
-
     private static void drawFist(VertexConsumer vc, PoseStack.Pose pose, float a) {
         // thân hộp (mặt dưới là màn hình tím)
         box(vc, pose, 0F, 0.8F, 0F, 1.1F, 0.8F, 1.1F, CASING, CASING, SCREEN, a);

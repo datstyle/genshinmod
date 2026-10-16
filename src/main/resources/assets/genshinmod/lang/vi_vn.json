@@ -28,6 +28,18 @@
   "staffhoma.genshin.skill_2": "Đủ 3 Linh Hỏa: bùng nổ lửa diện rộng quanh người",
   "staffhoma.genshin.notifaction": "Đang trong trạng thái hộ ma",
 
+
+
   "item.genshinmod.fractured_halo": "Hào Quang Tách Rời",
-  "effect.genshinmod.paralysis": "Tê Liệt"
+  "effect.genshinmod.paralysis": "Tê Liệt",
+  "halo.genshinmod.type": "Trường thương",
+  "halo.genshinmod.charge": "Điện năng",
+  "halo.genshinmod.passive": "Nội tại",
+  "halo.genshinmod.passive_1": "Đòn đánh trúng và tia điện tích Điện năng (Tối đa 100%)",
+  "halo.genshinmod.skill": "Kỹ năng (Chuột phải)",
+  "halo.genshinmod.skill_2": "Tạo khiên quanh người 10 giây, mỗi giây bắn tia điện bán kính 2 block",
+  "halo.genshinmod.skill_3": "Địch trúng điện mất máu và bị tê liệt. Hồi chiêu 10 giây",
+  "halo.genshinmod.until": "Chiêu cuối (Chuột phải khi đủ 100%)",
+  "halo.genshinmod.until_1": "Nấm đấm giáng xuống, gây sát thương sấm sét lớn",
+  "halo.genshinmod.enchanted": "✦ Phù phép: Khiên hóa thành Cầu Điện Cực Quang"
 }

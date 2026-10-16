@@ -1,6 +1,7 @@
 package com.dat.genshinmod;
 
 import com.dat.genshinmod.client.ClientEvents;
+import com.dat.genshinmod.client.HaloBurstAftermath;
 import com.dat.genshinmod.client.SlamFx;
 import com.dat.genshinmod.client.TooltipColors;
 import com.dat.genshinmod.combat.ElectroPulseManager;
@@ -59,6 +60,7 @@ public class genshinmod
             MinecraftForge.EVENT_BUS.addListener(ClientEvents::onClientTick);
             MinecraftForge.EVENT_BUS.addListener(SlamFx::onRenderLevel);
             MinecraftForge.EVENT_BUS.addListener(TooltipColors::onTooltipColor);
+            MinecraftForge.EVENT_BUS.addListener(HaloBurstAftermath::onGui);
         }
 
         context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);

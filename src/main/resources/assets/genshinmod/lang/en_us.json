@@ -26,8 +26,21 @@
   "staffhoma.genshin.skill": "SKill (right click)",
   "staffhoma.genshin.skill_1": "Insufficient Spirit Fire: Sacrifice 2 Hearts to enter Demon Guard mode; attacks become more powerful and restore health.",
   "staffhoma.genshin.skill_2": "With all 3 Spirit Flames: triggers a massive area-of-effect fire explosion around the user.",
-  "staffhoma.genshin.notifaction": "Currently in a protective state."
+  "staffhoma.genshin.notifaction": "Currently in a protective state.",
 
-  
+
+
+  "item.genshinmod.fractured_halo": "Aura of Separation Weapons",
+  "effect.genshinmod.paralysis": "paralyzed",
+  "halo.genshinmod.type": "long spear",
+  "halo.genshinmod.charge": "Electrical Energy",
+  "halo.genshinmod.passive": "Intrinsic",
+  "halo.genshinmod.passive_1": "Hits and Electrical Charge (Max 100%)",
+  "halo.genshinmod.skill": "Skill (Right-click)",
+  "halo.genshinmod.skill_2": "Create a shield around yourself for 10 seconds; every second, it fires electric bolts within a 2-block radius.",
+  "halo.genshinmod.skill_3": "Enemies hit by the electricity take damage and become paralyzed. Cooldown: 10 seconds.",
+  "halo.genshinmod.until": "Ultimate (Right-click when at 100%)",
+  "halo.genshinmod.until_1": "The fist descends, dealing massive lightning damage.",
+  "halo.genshinmod.enchanted": "✦ Enchanted: Shield becomes an Electro Halo Sphere"
   
 }
