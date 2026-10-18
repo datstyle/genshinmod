@@ -1,9 +1,9 @@
 package com.dat.genshinmod.combat;
 
-import com.dat.genshinmod.effect.ModEffects;
 import com.dat.genshinmod.genshinmod;
-import com.dat.genshinmod.item.FracturedHaloItem;
-import com.dat.genshinmod.sound.ModSounds;
+import com.dat.genshinmod.item.weapon.FracturedHaloItem;
+import com.dat.genshinmod.registry.ModEffects;
+import com.dat.genshinmod.registry.ModSounds;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;

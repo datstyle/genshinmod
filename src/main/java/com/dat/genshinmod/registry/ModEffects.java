@@ -1,5 +1,6 @@
-package com.dat.genshinmod.effect;
+package com.dat.genshinmod.registry;
 
+import com.dat.genshinmod.effect.ParalysisEffect;
 import com.dat.genshinmod.genshinmod;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraftforge.registries.DeferredRegister;

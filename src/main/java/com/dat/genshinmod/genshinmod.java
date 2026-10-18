@@ -1,16 +1,17 @@
 package com.dat.genshinmod;
 
 import com.dat.genshinmod.client.ClientEvents;
-import com.dat.genshinmod.client.HaloBurstAftermath;
-import com.dat.genshinmod.client.SlamFx;
-import com.dat.genshinmod.client.TooltipColors;
+import com.dat.genshinmod.client.fx.HaloBurstAftermath;
+import com.dat.genshinmod.client.fx.SlamFx;
+import com.dat.genshinmod.client.gui.TooltipColors;
 import com.dat.genshinmod.combat.ElectroPulseManager;
 import com.dat.genshinmod.combat.SlamManager;
-import com.dat.genshinmod.effect.ModEffects;
-import com.dat.genshinmod.item.ModCreativeTabs;
-import com.dat.genshinmod.item.ModItems;
-import com.dat.genshinmod.loot.ModLootModifiers;
-import com.dat.genshinmod.sound.ModSounds;
+import com.dat.genshinmod.network.ModNetwork;
+import com.dat.genshinmod.registry.ModCreativeTabs;
+import com.dat.genshinmod.registry.ModEffects;
+import com.dat.genshinmod.registry.ModItems;
+import com.dat.genshinmod.registry.ModLootModifiers;
+import com.dat.genshinmod.registry.ModSounds;
 import com.mojang.logging.LogUtils;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Blocks;
@@ -26,7 +27,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.ForgeRegistries;
-import com.dat.genshinmod.network.ModNetwork;
 import org.slf4j.Logger;
 @Mod(genshinmod.MODID)
 public class genshinmod

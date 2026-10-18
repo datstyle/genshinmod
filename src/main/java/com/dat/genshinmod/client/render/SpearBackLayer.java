@@ -1,6 +1,6 @@
-package com.dat.genshinmod.client;
+package com.dat.genshinmod.client.render;
 
-import com.dat.genshinmod.item.ModItems;
+import com.dat.genshinmod.registry.ModItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;

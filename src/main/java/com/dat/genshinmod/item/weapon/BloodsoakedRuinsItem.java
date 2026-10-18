@@ -1,8 +1,8 @@
-package com.dat.genshinmod.item;
+package com.dat.genshinmod.item.weapon;
 
-import com.dat.genshinmod.client.SpearItemRenderer;
+import com.dat.genshinmod.client.render.SpearItemRenderer;
 import com.dat.genshinmod.combat.SlamManager;
-import com.dat.genshinmod.sound.ModSounds;
+import com.dat.genshinmod.registry.ModSounds;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;

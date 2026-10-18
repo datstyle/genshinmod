@@ -1,7 +1,7 @@
-package com.dat.genshinmod.client;
+package com.dat.genshinmod.client.gui;
 
-import com.dat.genshinmod.item.RarityWeapon;
-import com.dat.genshinmod.item.WeaponTier;
+import com.dat.genshinmod.item.weapon.RarityWeapon;
+import com.dat.genshinmod.item.weapon.WeaponTier;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 
 /** Viền và nền khung thông tin đổi theo độ hiếm: 4★ tím, hiếm vàng, siêu hiếm đỏ. */

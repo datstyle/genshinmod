@@ -1,4 +1,4 @@
-package com.dat.genshinmod.client;
+package com.dat.genshinmod.client.render;
 
 import com.dat.genshinmod.genshinmod;
 import com.mojang.blaze3d.vertex.PoseStack;

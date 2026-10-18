@@ -1,4 +1,4 @@
-package com.dat.genshinmod.item;
+package com.dat.genshinmod.registry;
 import com.dat.genshinmod.genshinmod;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;

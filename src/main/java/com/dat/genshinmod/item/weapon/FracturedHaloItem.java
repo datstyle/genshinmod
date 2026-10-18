@@ -1,9 +1,9 @@
-package com.dat.genshinmod.item;
+package com.dat.genshinmod.item.weapon;
 import java.util.function.Consumer;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import com.dat.genshinmod.client.HaloItemRenderer;
+import com.dat.genshinmod.client.render.HaloItemRenderer;
 import com.dat.genshinmod.combat.HaloManager;
-import com.dat.genshinmod.sound.ModSounds;
+import com.dat.genshinmod.registry.ModSounds;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;

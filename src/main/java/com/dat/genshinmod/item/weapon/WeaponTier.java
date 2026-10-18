@@ -1,4 +1,4 @@
-package com.dat.genshinmod.item;
+package com.dat.genshinmod.item.weapon;
 
 import net.minecraft.network.chat.Style;
 

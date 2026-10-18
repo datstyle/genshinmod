@@ -1,7 +1,11 @@
 package com.dat.genshinmod.client;
 
-import com.dat.genshinmod.item.ModItems;
-import com.dat.genshinmod.sound.ModSounds;
+import com.dat.genshinmod.client.gui.SlotGlow;
+import com.dat.genshinmod.client.render.HaloItemRenderer;
+import com.dat.genshinmod.client.render.SpearBackLayer;
+import com.dat.genshinmod.client.render.SpearItemRenderer;
+import com.dat.genshinmod.registry.ModItems;
+import com.dat.genshinmod.registry.ModSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;

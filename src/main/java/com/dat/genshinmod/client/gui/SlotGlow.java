@@ -1,4 +1,4 @@
-package com.dat.genshinmod.client;
+package com.dat.genshinmod.client.gui;
 
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;

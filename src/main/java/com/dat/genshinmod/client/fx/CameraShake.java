@@ -1,4 +1,4 @@
-package com.dat.genshinmod.client;
+package com.dat.genshinmod.client.fx;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.Vec3;

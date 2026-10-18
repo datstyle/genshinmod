@@ -1,6 +1,7 @@
-package com.dat.genshinmod.loot;
+package com.dat.genshinmod.registry;
 
 import com.dat.genshinmod.genshinmod;
+import com.dat.genshinmod.loot.AddItemModifier;
 import com.mojang.serialization.Codec;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.eventbus.api.IEventBus;

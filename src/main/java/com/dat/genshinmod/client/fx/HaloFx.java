@@ -1,8 +1,8 @@
-package com.dat.genshinmod.client;
+package com.dat.genshinmod.client.fx;
 
-import com.dat.genshinmod.effect.ModEffects;
 import com.dat.genshinmod.genshinmod;
-import com.dat.genshinmod.item.FracturedHaloItem;
+import com.dat.genshinmod.item.weapon.FracturedHaloItem;
+import com.dat.genshinmod.registry.ModEffects;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;

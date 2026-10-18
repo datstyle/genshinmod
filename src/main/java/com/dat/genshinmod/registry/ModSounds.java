@@ -1,4 +1,4 @@
-package com.dat.genshinmod.sound;
+package com.dat.genshinmod.registry;
 
 import com.dat.genshinmod.genshinmod;
 import net.minecraft.resources.ResourceLocation;

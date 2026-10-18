@@ -1,6 +1,6 @@
-package com.dat.genshinmod.item;
+package com.dat.genshinmod.item.weapon;
 
-import com.dat.genshinmod.sound.ModSounds;
+import com.dat.genshinmod.registry.ModSounds;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;

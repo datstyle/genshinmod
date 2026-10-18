@@ -1,6 +1,9 @@
-package com.dat.genshinmod.item;
+package com.dat.genshinmod.registry;
 
 import com.dat.genshinmod.genshinmod;
+import com.dat.genshinmod.item.weapon.BloodsoakedRuinsItem;
+import com.dat.genshinmod.item.weapon.FracturedHaloItem;
+import com.dat.genshinmod.item.weapon.StaffOfHomaItem;
 import net.minecraft.world.item.*;
 import net.minecraftforge.registries.*;
 

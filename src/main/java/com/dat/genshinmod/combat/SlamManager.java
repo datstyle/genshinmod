@@ -2,7 +2,7 @@ package com.dat.genshinmod.combat;
 
 import com.dat.genshinmod.network.FxPacket;
 import com.dat.genshinmod.network.ModNetwork;
-import com.dat.genshinmod.sound.ModSounds;
+import com.dat.genshinmod.registry.ModSounds;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;

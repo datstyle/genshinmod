@@ -1,6 +1,6 @@
 package com.dat.genshinmod.network;
 
-import com.dat.genshinmod.client.SlamFx;
+import com.dat.genshinmod.client.fx.SlamFx;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;

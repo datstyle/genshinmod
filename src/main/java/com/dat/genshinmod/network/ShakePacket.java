@@ -1,6 +1,6 @@
 package com.dat.genshinmod.network;
 
-import com.dat.genshinmod.client.CameraShake;
+import com.dat.genshinmod.client.fx.CameraShake;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;

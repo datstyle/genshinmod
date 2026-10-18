@@ -1,6 +1,6 @@
-package com.dat.genshinmod.client;
+package com.dat.genshinmod.client.fx;
 
-import com.dat.genshinmod.item.ModItems;
+import com.dat.genshinmod.registry.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.DustParticleOptions;
