@@ -12,7 +12,7 @@ public class ModSounds {
             DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, genshinmod.MODID);
 
     /* BloodSoaked Ruins */
-    public static final RegistryObject<SoundEvent> DASH   = register("bloodsoaked_dash");
+    public static final RegistryObject<SoundEvent> DASH   = register("bloodsoaked_dash");   
     public static final RegistryObject<SoundEvent> HIT    = register("bloodsoaked_hit");
     public static final RegistryObject<SoundEvent> CHARGE = register("bloodsoaked_charge");
     public static final RegistryObject<SoundEvent> BURST  = register("bloodsoaked_burst");
@@ -25,6 +25,12 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> HOMA_CHARGE = register("homa_charge");
     public static final RegistryObject<SoundEvent> HOMA_READY = register("homa_ready");
     public static final RegistryObject<SoundEvent> HOMA_BURST = register("homa_burst");
+
+    public static final RegistryObject<SoundEvent> HALO_SKILL = register("halo_skill");
+    public static final RegistryObject<SoundEvent> HALO_PULSE = register("halo_pulse");
+    public static final RegistryObject<SoundEvent> HALO_BURST = register("halo_burst");
+    public static final RegistryObject<SoundEvent> HALO_READY = register("halo_ready");
+    public static final RegistryObject<SoundEvent> HALO_IMPACT = register("halo_impact");
 
     private static RegistryObject<SoundEvent> register(String name) {
         return SOUNDS.register(name, () ->

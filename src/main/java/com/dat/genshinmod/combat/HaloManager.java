@@ -3,13 +3,11 @@ package com.dat.genshinmod.combat;
 import com.dat.genshinmod.effect.ModEffects;
 import com.dat.genshinmod.genshinmod;
 import com.dat.genshinmod.item.FracturedHaloItem;
+import com.dat.genshinmod.sound.ModSounds;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.phys.AABB;
@@ -108,8 +106,8 @@ public final class HaloManager {
             hits++;
         }
         if (hits > 0) FracturedHaloItem.addEnergy(p, hits * FracturedHaloItem.ENERGY_PER_ARC_HIT);
-        level.playSound(null, p.getX(), p.getY(), p.getZ(),
-                SoundEvents.TRIDENT_THUNDER, SoundSource.PLAYERS, 0.5F, 1.6F);
+        level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.HALO_PULSE.get(),
+                SoundSource.PLAYERS, 0.7F, 1.0F);
     }
 
     /** Nắm đấm chạm đất: sát thương sấm sét diện rộng + tia sét (chỉ để nhìn, không gây cháy). */
@@ -131,21 +129,7 @@ public final class HaloManager {
             e.push(dir.x * 0.6, 0.35, dir.z * 0.6);
             e.hurtMarked = true;
         }
-
-        spawnBolt(level, c.x, c.y, c.z);
-        for (int i = 0; i < 3; i++) {
-            double ang = level.random.nextDouble() * Math.PI * 2;
-            double dist = 1.5 + level.random.nextDouble() * (r - 1.5);
-            spawnBolt(level, c.x + Math.cos(ang) * dist, c.y, c.z + Math.sin(ang) * dist);
-        }
-        level.playSound(null, c.x, c.y, c.z, SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 0.8F, 0.7F);
-    }
-
-    private static void spawnBolt(ServerLevel level, double x, double y, double z) {
-        LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level);
-        if (bolt == null) return;
-        bolt.moveTo(x, y, z);
-        bolt.setVisualOnly(true);
-        level.addFreshEntity(bolt);
+        level.playSound(null, c.x, c.y, c.z, ModSounds.HALO_IMPACT.get(),
+                SoundSource.PLAYERS, 1.2F, 1.0F);
     }
 }

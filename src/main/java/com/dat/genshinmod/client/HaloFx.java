@@ -5,16 +5,11 @@ import com.dat.genshinmod.genshinmod;
 import com.dat.genshinmod.item.FracturedHaloItem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,24 +23,10 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.Random;
 @Mod.EventBusSubscriber(modid = genshinmod.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class HaloFx {
-
-    private static final ResourceLocation FIST_TEX = new ResourceLocation(genshinmod.MODID, "textures/fx/halo_fist.png");
-
-    // vùng UV trong halo_fist.png (64x64)
-    private static final float[] CASING = uv(2, 2, 30, 30);
-    private static final float[] SCREEN = uv(34, 2, 62, 30);
-    private static final float[] TREAD = uv(2, 34, 30, 62);
-    private static final float[] BRONZE = uv(34, 34, 62, 62);
-
-    private static final int FIST_TOTAL = 40;        // tổng thời gian nắm đấm tồn tại (tick)
     private static final int PULSE_FLASH = 7;        // tia điện hiện bao nhiêu tick sau mỗi lần bắn
     private static final double MAX_DIST_SQR = 64.0 * 64.0;
 
     private HaloFx() {}
-
-    private static float[] uv(int u0, int v0, int u1, int v1) {
-        return new float[]{u0 / 64F, v0 / 64F, u1 / 64F, v1 / 64F};
-    }
 
     @SubscribeEvent
     public static void onRenderLevel(RenderLevelStageEvent event) {
@@ -53,6 +34,7 @@ public final class HaloFx {
         Minecraft mc = Minecraft.getInstance();
         ClientLevel level = mc.level;
         if (level == null) return;
+        HaloVisualState.begin(level);
 
         long now = level.getGameTime();
         float pt = event.getPartialTick();
@@ -60,22 +42,20 @@ public final class HaloFx {
         PoseStack pose = event.getPoseStack();
         MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
         RenderType glowType = RenderType.lightning();
-        RenderType fistType = RenderType.entityTranslucentEmissive(FIST_TEX);
 
         // ================= Người chơi cầm Hào Quang Tách Rời =================
         for (AbstractClientPlayer p : level.players()) {
-            ItemStack held = FracturedHaloItem.held(p);
-            if (held.isEmpty() || !held.hasTag()) continue;
             if (p.distanceToSqr(cam) > MAX_DIST_SQR) continue;
-            CompoundTag tag = held.getTag();
+            // Trạng thái hiệu ứng được lưu lại: đổi sang ô khác vẫn vẽ tiếp tới khi skill/chiêu cuối hết hạn
+            HaloVisualState st = HaloVisualState.of(p, FracturedHaloItem.held(p));
 
             double px = Mth.lerp(pt, p.xo, p.getX()) - cam.x;
             double py = Mth.lerp(pt, p.yo, p.getY()) - cam.y;
             double pz = Mth.lerp(pt, p.zo, p.getZ()) - cam.z;
 
-            long burstTick = tag.contains("BurstTick") ? tag.getLong("BurstTick") : Long.MIN_VALUE / 2;
+            long burstTick = st.burstTick;
             float burstAge = (now - burstTick) + pt;
-            boolean skillOn = tag.getLong("SkillUntil") > now;
+            boolean skillOn = st.skillUntil > now;
             boolean fistOn = burstAge >= 0.0f && burstAge < HaloBurstFx.FIST_END;
             if (!skillOn && !fistOn) continue;
 
@@ -85,11 +65,11 @@ public final class HaloFx {
             PoseStack.Pose last = pose.last();
 
             if (skillOn) {
-                long start = tag.getLong("SkillStart");
+                long start = st.skillStart;
                 float age = (now - start) + pt;
-                float left = tag.getLong("SkillUntil") - now - pt;
+                float left = st.skillUntil - now - pt;
                 boolean firstPersonSelf = p == mc.player && mc.options.getCameraType().isFirstPerson();
-                if (tag.getBoolean("SkillEnch")) {
+                if (st.skillEnch) {
                     HaloShieldFx.render(glow, last, p.getId(), start, age, left,
                             px, py, pz, firstPersonSelf, (float) FracturedHaloItem.ARC_RADIUS);
                 } else {
@@ -98,12 +78,12 @@ public final class HaloFx {
                 }
             }
             if (fistOn) {
-                double ix = tag.getDouble("BurstX") - cam.x;
-                double iy = tag.getDouble("BurstY") - cam.y;
-                double iz = tag.getDouble("BurstZ") - cam.z;
+                double ix = st.burstX - cam.x;
+                double iy = st.burstY - cam.y;
+                double iz = st.burstZ - cam.z;
                 // Chỉ vẽ bằng `glow`. KHÔNG gọi buffers.getBuffer(...) loại khác ở đây: các loại chung 1 bộ đệm nên sẽ làm hỏng `glow`
                 HaloBurstFx.render(glow, last, p.getId(), burstTick, burstAge, ix, iy, iz,
-                        tag.getFloat("BurstYaw"), px, py, pz);
+                        st.burstYaw, px, py, pz, p.getYRot(), st.burstEnch);
             }
             pose.popPose();
         }
@@ -130,7 +110,6 @@ public final class HaloFx {
         pose.popPose();
 
         buffers.endBatch(glowType);
-        buffers.endBatch(fistType);
     }
 
     // ============================== Khiên + tia điện ==============================
@@ -175,64 +154,6 @@ public final class HaloFx {
             bolt(vc, pose, origin, end, 0.05F, fade, rnd, 6, 0.4);
         }
     }
-    @SuppressWarnings("unsend")
-    // ============================== Nắm đấm ==============================
-    private static void drawFist(VertexConsumer vc, PoseStack.Pose pose, float a) {
-        // thân hộp (mặt dưới là màn hình tím)
-        box(vc, pose, 0F, 0.8F, 0F, 1.1F, 0.8F, 1.1F, CASING, CASING, SCREEN, a);
-        // viền màn hình phát sáng: hộp mỏng hơi nhô ra phía dưới
-        box(vc, pose, 0F, 0.05F, 0F, 1.18F, 0.06F, 1.18F, CASING, CASING, SCREEN, a);
-        // bánh xe cổ tay (trục theo phương ngang)
-        wheel(vc, pose, 0F, 2.45F, 0F, 0.85F, 0.75F, 14, TREAD, BRONZE, a);
-        // cần nối lên trên
-        box(vc, pose, 0F, 3.8F, 0F, 0.25F, 0.55F, 0.25F, CASING, BRONZE, CASING, a);
-    }
-
-    private static void box(VertexConsumer vc, PoseStack.Pose pose, float cx, float cy, float cz,
-                            float hx, float hy, float hz, float[] side, float[] top, float[] bottom, float a) {
-        float x0 = cx - hx, x1 = cx + hx, y0 = cy - hy, y1 = cy + hy, z0 = cz - hz, z1 = cz + hz;
-        face(vc, pose, x1, y0, z0, x1, y1, z0, x1, y1, z1, x1, y0, z1, side, 0.85F, a);   // +X
-        face(vc, pose, x0, y0, z1, x0, y1, z1, x0, y1, z0, x0, y0, z0, side, 0.85F, a);   // -X
-        face(vc, pose, x0, y0, z1, x1, y0, z1, x1, y1, z1, x0, y1, z1, side, 0.70F, a);   // +Z
-        face(vc, pose, x1, y0, z0, x0, y0, z0, x0, y1, z0, x1, y1, z0, side, 0.70F, a);   // -Z
-        face(vc, pose, x0, y1, z0, x0, y1, z1, x1, y1, z1, x1, y1, z0, top, 1.00F, a);    // +Y
-        face(vc, pose, x0, y0, z0, x1, y0, z0, x1, y0, z1, x0, y0, z1, bottom, 1.00F, a); // -Y
-    }
-
-    private static void wheel(VertexConsumer vc, PoseStack.Pose pose, float cx, float cy, float cz,
-                              float radius, float halfLen, int segs, float[] tread, float[] cap, float a) {
-        for (int i = 0; i < segs; i++) {
-            float a0 = Mth.TWO_PI * i / segs, a1 = Mth.TWO_PI * (i + 1) / segs;
-            float y0 = cy + radius * Mth.cos(a0), z0 = cz + radius * Mth.sin(a0);
-            float y1 = cy + radius * Mth.cos(a1), z1 = cz + radius * Mth.sin(a1);
-            float shade = 0.6F + 0.4F * Math.max(0F, Mth.cos((a0 + a1) * 0.5F));
-            face(vc, pose, cx - halfLen, y0, z0, cx + halfLen, y0, z0, cx + halfLen, y1, z1, cx - halfLen, y1, z1, tread, shade, a);
-            face(vc, pose, cx + halfLen, cy, cz, cx + halfLen, y0, z0, cx + halfLen, y1, z1, cx + halfLen, y1, z1, cap, 0.9F, a);
-            face(vc, pose, cx - halfLen, cy, cz, cx - halfLen, y1, z1, cx - halfLen, y0, z0, cx - halfLen, y0, z0, cap, 0.8F, a);
-        }
-    }
-
-    private static void face(VertexConsumer vc, PoseStack.Pose pose,
-                             float ax, float ay, float az, float bx, float by, float bz,
-                             float cx, float cy, float cz, float dx, float dy, float dz,
-                             float[] uv, float shade, float a) {
-        tv(vc, pose, ax, ay, az, uv[0], uv[3], shade, a);
-        tv(vc, pose, bx, by, bz, uv[2], uv[3], shade, a);
-        tv(vc, pose, cx, cy, cz, uv[2], uv[1], shade, a);
-        tv(vc, pose, dx, dy, dz, uv[0], uv[1], shade, a);
-    }
-
-    private static void tv(VertexConsumer vc, PoseStack.Pose pose, float x, float y, float z,
-                           float u, float v, float shade, float a) {
-        vc.vertex(pose.pose(), x, y, z)
-                .color(shade, shade, shade, a)
-                .uv(u, v)
-                .overlayCoords(OverlayTexture.NO_OVERLAY)
-                .uv2(LightTexture.FULL_BRIGHT)
-                .normal(pose.normal(), 0F, 1F, 0F)
-                .endVertex();
-    }
-
     // ============================== Hình học phát sáng ==============================
 
     private static void cv(VertexConsumer vc, PoseStack.Pose pose, double x, double y, double z, int r, int g, int b, int a) {
@@ -243,19 +164,6 @@ public final class HaloFx {
     private static void quad2(VertexConsumer vc, PoseStack.Pose pose, double[][] v, int r, int g, int b, int a) {
         for (int i = 0; i < 4; i++) cv(vc, pose, v[i][0], v[i][1], v[i][2], r, g, b, a);
         for (int i = 3; i >= 0; i--) cv(vc, pose, v[i][0], v[i][1], v[i][2], r, g, b, a);
-    }
-
-    private static void ring(VertexConsumer vc, PoseStack.Pose pose, double cx, double cy, double cz,
-                             float r0, float r1, int segs, int r, int g, int b, int a) {
-        for (int i = 0; i < segs; i++) {
-            float a0 = Mth.TWO_PI * i / segs, a1 = Mth.TWO_PI * (i + 1) / segs;
-            double[][] v = {
-                    {cx + r0 * Mth.cos(a0), cy, cz + r0 * Mth.sin(a0)},
-                    {cx + r1 * Mth.cos(a0), cy, cz + r1 * Mth.sin(a0)},
-                    {cx + r1 * Mth.cos(a1), cy, cz + r1 * Mth.sin(a1)},
-                    {cx + r0 * Mth.cos(a1), cy, cz + r0 * Mth.sin(a1)}};
-            quad2(vc, pose, v, r, g, b, a);
-        }
     }
 
     /** Tia điện zíc zắc từ a đến b (tọa độ đã trừ vị trí camera). Hai lớp: quầng xanh và lõi trắng. */

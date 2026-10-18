@@ -4,8 +4,15 @@
   "bloodsoaked_charge": { "sounds": [ "genshinmod:bloodsoaked_charge" ] },
   "bloodsoaked_burst":  { "sounds": [ "genshinmod:bloodsoaked_burst" ] },
   "bloodsoaked_slash": { "sounds": [ "genshinmod:bloodsoaked_slash" ] },
+
   "homa_slash":  { "sounds": ["genshinmod:staff_of_homa/homa_slash"] },
   "homa_charge": { "sounds": ["genshinmod:staff_of_homa/homa_charge"] },
   "homa_ready":  { "sounds": ["genshinmod:staff_of_homa/homa_ready"] },
-  "homa_burst":  { "sounds": ["genshinmod:staff_of_homa/homa_burst"] }
+  "homa_burst":  { "sounds": ["genshinmod:staff_of_homa/homa_burst"] },
+
+  "halo_skill": {"sounds": ["genshinmod:halo/halo_skill"] },
+  "halo_pulse": {"sounds": ["genshinmod:halo/halo_pulse"] },
+  "halo_ready": {"sounds": ["genshinmod:halo/halo_ready"] },
+  "halo_burst": {"sounds": ["genshinmod:halo/halo_burst"] },
+  "halo_impact": {"sounds": ["genshinmod:halo/halo_impact"] }
 }

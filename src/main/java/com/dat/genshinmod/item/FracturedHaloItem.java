@@ -3,6 +3,7 @@ import java.util.function.Consumer;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import com.dat.genshinmod.client.HaloItemRenderer;
 import com.dat.genshinmod.combat.HaloManager;
+import com.dat.genshinmod.sound.ModSounds;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
@@ -10,7 +11,6 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -57,7 +57,7 @@ public class FracturedHaloItem extends SwordItem implements RarityWeapon {
 
     public static final double BURST_FORWARD = 3.5;       // nắm đấm giáng xuống cách người bao xa
     public static final double BURST_RADIUS = 5.0;        // bán kính sát thương nắm đấm
-    public static final int BURST_DELAY = 8;              // tick từ lúc bấm đến lúc đấm chạm đất
+    public static final int BURST_DELAY = 45;              // tick từ lúc bấm đến lúc đấm chạm đất
     public static final float BURST_DAMAGE = 16.0F;       // sát thương sấm sét (16 = 8 tim)
     public static final int BURST_PARALYZE_TICKS = 20;
 
@@ -125,10 +125,12 @@ public class FracturedHaloItem extends SwordItem implements RarityWeapon {
             tag.putDouble("BurstY", impact.y);
             tag.putDouble("BurstZ", impact.z);
             tag.putFloat("BurstYaw", player.getYRot());
+            boolean ench = stack.isEnchanted();
+            tag.putBoolean("BurstEnch", ench);
             HaloManager.queueBurst(sp, impact);
 
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                    SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.0F, 0.6F);
+                    ModSounds.HALO_BURST.get(), SoundSource.PLAYERS, 1.2F, 1.0F);
         } else if (now >= tag.getLong("SkillCd")) {
             // ===== KỸ NĂNG: khiên + tia điện =====
             tag.putLong("SkillStart", now);
@@ -139,7 +141,7 @@ public class FracturedHaloItem extends SwordItem implements RarityWeapon {
             HaloManager.startSkill(sp);
 
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                    SoundEvents.BEACON_POWER_SELECT, SoundSource.PLAYERS, 1.0F, 1.5F);
+                    ModSounds.HALO_SKILL.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
         } else {
             return InteractionResultHolder.fail(stack);
         }
@@ -158,7 +160,14 @@ public class FracturedHaloItem extends SwordItem implements RarityWeapon {
 
     public static void addEnergy(Player player, int amount) {
         ItemStack s = held(player);
-        if (!s.isEmpty()) addEnergyTo(s, amount);
+        if (!s.isEmpty()) {
+            int before = getEnergy(s);
+            addEnergyTo(s, amount);
+            if (before < MAX_ENERGY && getEnergy(s) >= MAX_ENERGY) {
+                player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                        ModSounds.HALO_READY.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+            }
+        }
     }
 
     /** Cây Hào Quang Tách Rời đang cầm trên tay (tay chính, không có thì tay phụ). */
