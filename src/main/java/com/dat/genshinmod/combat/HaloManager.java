@@ -32,7 +32,10 @@ public final class HaloManager {
     private static final class Skill {
         final ServerPlayer owner;
         final long start;
-        Skill(ServerPlayer owner, long start) { this.owner = owner; this.start = start; }
+        Skill(ServerPlayer owner, long start) {this.owner = owner; this.start = start;}
+            void release() {
+                owner.setAbsorptionAmount(0f); 
+            }
     }
 
     private static final class Burst {
@@ -47,8 +50,9 @@ public final class HaloManager {
 
     private HaloManager() {}
 
-    public static void startSkill(ServerPlayer player) {
-        SKILLS.removeIf(s -> s.owner == player);
+    public static void startSkill(ServerPlayer player, float shield) {
+        SKILLS.removeIf( s -> {if(s.owner == player) {s.release(); return true;} return false;});
+        player.setAbsorptionAmount(Math.max(player.getAbsorptionAmount(), shield));
         SKILLS.add(new Skill(player, player.level().getGameTime()));
     }
 
@@ -66,7 +70,7 @@ public final class HaloManager {
             ServerPlayer p = s.owner;
             if (p.isRemoved() || !p.isAlive()) { si.remove(); continue; }
             long age = p.level().getGameTime() - s.start;
-            if (age >= FracturedHaloItem.SKILL_TICKS) { si.remove(); continue; }
+            if (age >= FracturedHaloItem.SKILL_TICKS) {s.release(); si.remove(); continue; }
             if (age % FracturedHaloItem.PULSE_INTERVAL == 0) pulse(p);
         }
 

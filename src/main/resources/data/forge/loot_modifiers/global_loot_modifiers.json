@@ -1,4 +1,8 @@
 {
   "replace": false,
-  "entries": [ "genshinmod:bloodsoaked_ruins_in_structures" ]
+  "entries": [
+    "genshinmod:bloodsoaked_ruins_in_structures",
+    "genshinmod:fractured_halo_in_structures",
+    "genshinmod:staff_of_homa_in_structures"
+  ]
 }

@@ -3,6 +3,7 @@ import java.util.function.Consumer;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import com.dat.genshinmod.client.render.HaloItemRenderer;
 import com.dat.genshinmod.combat.HaloManager;
+import com.dat.genshinmod.combat.HaloShield;
 import com.dat.genshinmod.registry.ModSounds;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
@@ -14,8 +15,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -53,7 +52,6 @@ public class FracturedHaloItem extends SwordItem implements RarityWeapon {
     public static final double ARC_RADIUS = 2.0;          // bán kính tia điện: 2 block
     public static final float ARC_DAMAGE = 3.0F;          // sát thương mỗi lần bắn (3 = 1.5 tim)
     public static final int PARALYZE_TICKS = 30;          // thời gian tê liệt mỗi lần bị bắn
-    private static final int ABSORPTION_AMP = 1;          // khiên: Absorption II (4 tim)
 
     public static final double BURST_FORWARD = 3.5;       // nắm đấm giáng xuống cách người bao xa
     public static final double BURST_RADIUS = 5.0;        // bán kính sát thương nắm đấm
@@ -137,8 +135,7 @@ public class FracturedHaloItem extends SwordItem implements RarityWeapon {
             tag.putLong("SkillUntil", now + SKILL_TICKS);
             tag.putLong("SkillCd", now + SKILL_COOLDOWN);
             tag.putBoolean("SkillEnch", stack.isEnchanted());
-            player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, SKILL_TICKS, ABSORPTION_AMP));
-            HaloManager.startSkill(sp);
+            HaloManager.startSkill(sp, HaloShield.forWeapon(stack));
 
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
                     ModSounds.HALO_SKILL.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
